@@ -1,0 +1,1 @@
+{"type": "FeatureCollection", "features": [{"type": "Feature", "geometry": {"type": "Point", "coordinates": [-72.898, -36.122]}, "properties": {"evento_id": "official20100227063411530_30", "mag": 8.8, "place": "2010 Maule, Chile Earthquake", "time": "2010-02-27T03:34:11.530000-03:00", "depth_km": 22.9}}]}

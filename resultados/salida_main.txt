@@ -1,0 +1,134 @@
+tabla edges: 2040 filas
+tabla edges_vertices_pgr: 2087 filas
+tabla nodos_clave: 18 filas
+tabla sismo: 1 filas
+tabla ruptura: 1 filas
+tabla modelo_param: 10 filas
+tabla componentes: 2087 filas
+main.sql escrito en /mnt/c/Users/matia/Desktop/Tarea-2-Ruteo/tarea2-resiliencia/main.sql
+
+======================================================================
+Paso 1: recrear base de datos
+======================================================================
+  base de datos 'resiliencia' creada
+
+======================================================================
+Paso 2: esquema y compatibilidad pgRouting
+======================================================================
+  SQL ejecutado: sql/01_esquema.sql
+  SQL ejecutado: sql/00_compat_pgrouting.sql
+
+======================================================================
+Paso 3: cargar shapefiles
+======================================================================
+  fibra_optica_detectada             1915 registros       10312.8 km
+  trayecto_en_ferry                   204 registros        2390.1 km
+  postacion_electrica_detectada      1213 registros        6712.4 km
+  camino_sin_postacion_detectado     1165 registros        8107.7 km
+
+======================================================================
+Paso 4: cargar sismo (USGS usp000h7rf)
+======================================================================
+  SQL ejecutado: sql/04_sismo.sql
+evento                        lugar                         mag  fecha_utc                         prof_km  strike  geom                    ruptura_km       
+----------------------------  ----------------------------  ---  --------------------------------  -------  ------  ----------------------  -----------------
+official20100227063411530_30  2010 Maule, Chile Earthquake  8.8  2010-02-27 03:34:11.530000-03:00  22.9     17.0    POINT(-72.898 -36.122)  564.9369748123029
+
+======================================================================
+Paso 5: topologia y nodos clave
+======================================================================
+  SQL ejecutado: sql/02_topologia.sql
+  SQL ejecutado: sql/03_nodos_clave.sql
+  Enlaces por tipo:
+tipo    n_aristas  km     
+------  ---------  -------
+acceso  18         20.0   
+fibra   2022       10296.4
+  Vertices: 2087
+  Componentes: 126   mayor: 339 vertices (16.2 %)
+  Nodos clave aislados (acceso > 20000 m): 0
+  Nodos clave:
+cod      nombre                                                           rol          vertex_id  componente  dist_acceso_m
+-------  ---------------------------------------------------------------  -----------  ---------  ----------  -------------
+ANF      Antofagasta - aterrizaje Prat                                    intercambia  2076       1707        371.8        
+ARI      Arica - aterrizaje SAm-1 y Prat                                  intercambia  2074       1761        982.9        
+CCP      Concepcion/Talcahuano - aterrizaje Prat, hub regional            intercambia  2078       126         46.2         
+CHL      Chillan                                                          recibe       2084       126         8.5          
+COY      Coyhaique                                                        recibe       2086       510         468.0        
+CPO      Copiapo                                                          recibe       2081       1812        82.7         
+IQQ      Iquique - aterrizaje Prat                                        intercambia  2075       1837        221.9        
+LAN      Los Andes - troncal internacional a Argentina (Cristo Redentor)  intercambia  2087       1680        42.5         
+LSC      La Serena - aterrizaje Prat                                      intercambia  2077       882         299.2        
+PMC      Puerto Montt - aterrizaje Prat y FOA                             intercambia  2079       105         302.4        
+PUQ      Punta Arenas - aterrizaje FOA                                    intercambia  2080       981         614.4        
+RCG      Rancagua                                                         recibe       2082       1594        341.5        
+SCL_DC   Quilicura - cluster de data centers (Google y otros)             genera       2072       882         2822.4       
+SCL_PIT  Santiago - PIT Chile / NAP Chile                                 intercambia  2071       882         10655.6      
+TCO      Temuco                                                           recibe       2085       253         457.6        
+TLC      Talca                                                            recibe       2083       178         967.9        
+VAP      Valparaiso - aterrizaje SAm-1, SAC, Curie                        intercambia  2073       924         1274.7       
+VLD      Valdivia                                                         recibe       134        93          1.4          
+
+======================================================================
+Paso 6: modelo de falla
+======================================================================
+  SQL ejecutado: sql/05_modelo_falla.sql
+  Top-10 (mayor p_falla, enlaces >= 1 km):
+id   tipo   sintetico  largo_km  dist_ruptura_km  pga_g   pgv_cms  p_falla
+---  -----  ---------  --------  ---------------  ------  -------  -------
+4    fibra  False      12.15     0.0              0.2644  32.23    0.5944 
+124  fibra  False      13.90     19.9             0.2458  29.96    0.5835 
+164  fibra  False      12.74     14.4             0.2537  30.93    0.5778 
+584  fibra  False      23.08     51.7             0.1930  23.53    0.5701 
+550  fibra  False      13.11     19.8             0.2460  29.99    0.5629 
+681  fibra  False      12.29     15.3             0.2525  30.79    0.5611 
+3    fibra  False      10.16     2.5              0.2640  32.19    0.5288 
+69   fibra  False      10.53     9.3              0.2597  31.66    0.5282 
+777  fibra  False      12.55     24.8             0.2377  28.98    0.5201 
+600  fibra  False      15.33     37.5             0.2162  26.36    0.5152 
+  Bottom-5 (menor p_falla, enlaces >= 1 km):
+id    tipo   sintetico  largo_km  dist_ruptura_km  pga_g   pgv_cms  p_falla
+----  -----  ---------  --------  ---------------  ------  -------  -------
+2020  fibra  False      1.10      1887.4           0.0012  0.15     0.0000 
+2018  fibra  False      1.34      1887.3           0.0012  0.15     0.0000 
+1881  fibra  False      1.02      1666.2           0.0016  0.19     0.0000 
+1734  fibra  False      1.33      1705.5           0.0015  0.18     0.0000 
+1978  fibra  False      2.02      1738.4           0.0014  0.18     0.0000 
+  Enlaces con p_falla > 0.5: 12   media p_falla: 0.053253
+  p_falla por banda de distancia a la ruptura:
+banda_km  n_enlaces  km    pga_media_g  p_falla_media  p_falla_max
+--------  ---------  ----  -----------  -------------  -----------
+0-50      215        1023  0.238        0.2282         0.5944     
+50-100    401        1763  0.153        0.0920         0.5701     
+100-200   520        2215  0.106        0.0394         0.1993     
+200-400   240        1298  0.045        0.0079         0.0405     
+>400      664        4018  0.009        0.0004         0.0087     
+
+======================================================================
+Dump: generar main.sql
+======================================================================
+
+======================================================================
+Paso 7: ATTR (operacion vs sismo), N=10000, seed=2010
+======================================================================
+  Escenario operacion: 2040 enlaces, 18 nodos clave
+    ATTR = 0.026144   IC95 [0.026144, 0.026144]   exacto (p=0)
+  Escenario sismo: 2040 enlaces, 18 nodos clave
+  iteraciones 2000/10000 (0.8 s)
+  iteraciones 4000/10000 (1.6 s)
+  iteraciones 6000/10000 (2.3 s)
+  iteraciones 8000/10000 (3.0 s)
+  iteraciones 10000/10000 (3.7 s)
+    ATTR = 0.007208   IC95 [0.007112, 0.007305]   Monte Carlo (N=10000, seed=2010)
+  Diferencia (sismo - operacion): -0.018935   (-72.43 %)
+  Resultados: resultados/attr_pares.csv, resultados/attr.json, tabla resultados_attr
+
+======================================================================
+Paso 8: exportar capas del mapa
+======================================================================
+  web/data/enlaces.geojson (927979 bytes)
+  web/data/potencial.geojson (1044276 bytes)
+  web/data/nodos_clave.geojson (6313 bytes)
+  web/data/sismo.geojson (306 bytes)
+  web/data/ruptura.geojson (212 bytes)
+  web/data/attr.json (410 bytes)

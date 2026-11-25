@@ -71,6 +71,7 @@ data/usgs_usp000h7rf.geojson  sismo descargado del USGS
 web/                    mapa Leaflet (index.html + data/*.geojson generados)
 resultados/             attr.json, attr_pares.csv, salida_main.txt
 docs/                   capturas del mapa
+informe/                informe.tex + informe.pdf (latexmk -pdf informe.tex; LaTeX: informe/instalar_tex.sh)
 ```
 
 ---
